@@ -1,13 +1,14 @@
 package usecase
 
 import (
-	"context"
+	//"context"
 	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"whatsapp-parser/internal/domain"
 	"whatsapp-parser/pkg/selenium"
+
+	"github.com/google/uuid"
 )
 
 type sessionUseCase struct {
@@ -29,17 +30,17 @@ func NewSessionUseCase(repo domain.SessionRepository) (domain.SessionUseCase, er
 }
 
 func (u *sessionUseCase) CreateSession() (*domain.Session, string, error) {
-	// Get QR code
-	qrCode, err := u.whatsappClient.GetQRCode(context.Background())
-	if err != nil {
-		return nil, "", fmt.Errorf("failed to get QR code: %v", err)
-	}
-
 	// Create new session
 	session := &domain.Session{
 		ID:        uuid.New().String(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+	}
+
+	// Get QR code
+	qrCode, err := u.whatsappClient.GetQRCode(session.ID)
+	if err != nil {
+		return nil, "", fmt.Errorf("failed to get QR code: %v", err)
 	}
 
 	// Save session
@@ -90,4 +91,4 @@ func (u *sessionUseCase) SendMessage(sessionID string, phoneNumber string, messa
 	}
 
 	return nil
-} 
+}
